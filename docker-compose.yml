@@ -5,7 +5,7 @@ services:
     ports:
       - "5086:5086"
     environment:
-      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=db;Username=kizil;Password=kizil"
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=db;Username=kizil;Password=kizilllllll"
     depends_on:
       - postgres
 
@@ -13,7 +13,7 @@ services:
     image: postgres:15
     environment:
       POSTGRES_USER: kizil
-      POSTGRES_PASSWORD: kizil
+      POSTGRES_PASSWORD: kizilllllll
       POSTGRES_DB: db
     ports:
       - "5432:5433"
