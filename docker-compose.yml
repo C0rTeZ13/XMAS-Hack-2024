@@ -1,0 +1,19 @@
+services:
+  backend:
+    build:
+      context: .
+    ports:
+      - "5086:5086"
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=db;Username=kizil;Password=kizil"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: kizil
+      POSTGRES_PASSWORD: kizil
+      POSTGRES_DB: db
+    ports:
+      - "5432:5433"
