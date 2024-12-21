@@ -30,9 +30,9 @@ namespace ServiceLayer.Services
             if (INN != null)
             {
                 CompanyInfo? info = await _parserService.GetСompanyInfoAsync(INN);
-                if (worksheet.Cells["D2"] is null) worksheet.Cells["D2"].Value = info?.EmemployeeCount;
-                if (worksheet.Cells["B2"] is null) worksheet.Cells["B2"].Value = info?.ActivityCode;
-                if (worksheet.Cells["H2"] is null) worksheet.Cells["H2"].Value = info?.Revenue;
+                if (worksheet.Cells["D2"].Value == null) worksheet.Cells["D2"].Value = info?.EmemployeeCount;
+                if (worksheet.Cells["B2"].Value == null) worksheet.Cells["B2"].Value = info?.ActivityCode;
+                if (worksheet.Cells["H2"].Value == null) worksheet.Cells["H2"].Value = info?.Revenue;
                 worksheet.Cells["N2"].Value = info?.ReliabilityRating;
                 worksheet.Cells["O2"].Value = info?.RecommendedDealLimit;
             }
