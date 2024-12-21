@@ -3,7 +3,7 @@ services:
     build:
       context: .
     ports:
-      - "5086:5086"
+      - "8080:8080"
     environment:
       - SuperuserSettings__UserName=admin
       - SuperuserSettings__Password=SuperSecurePassword123!

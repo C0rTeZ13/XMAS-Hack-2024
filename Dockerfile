@@ -6,6 +6,8 @@ WORKDIR /app
 COPY ./API/API.csproj ./API/
 COPY ./DataLayer/DataLayer.csproj ./DataLayer/
 COPY ./ServiceLayer/ServiceLayer.csproj ./ServiceLayer/
+COPY ./API/appsettings.json /app/appsettings.json
+
 
 # Восстанавливаем все зависимости
 RUN dotnet restore ./API/API.csproj
@@ -21,4 +23,4 @@ RUN dotnet publish ./API/API.csproj -c Release -o /app/publish
 # Указываем точку входа
 ENTRYPOINT ["dotnet", "/app/publish/API.dll"]
 
-EXPOSE 5086
+EXPOSE 8080
