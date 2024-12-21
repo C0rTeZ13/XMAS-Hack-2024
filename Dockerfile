@@ -9,6 +9,7 @@ COPY ./ServiceLayer/ServiceLayer.csproj ./ServiceLayer/
 COPY ./API/appsettings.json /app/appsettings.json
 
 
+
 # Восстанавливаем все зависимости
 RUN dotnet restore ./API/API.csproj
 RUN dotnet restore ./DataLayer/DataLayer.csproj

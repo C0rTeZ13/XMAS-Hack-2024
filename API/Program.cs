@@ -11,6 +11,12 @@ namespace API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Configuration
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+                .AddEnvironmentVariables();
+
             builder.Services.Configure<SuperuserSettings>(builder.Configuration.GetSection("SuperuserSettings"));
 
             builder.Services.AddControllers();
