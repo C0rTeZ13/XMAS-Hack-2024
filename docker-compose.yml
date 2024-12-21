@@ -5,15 +5,17 @@ services:
     ports:
       - "5086:5086"
     environment:
-      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=db;Username=kizil;Password=kizilllllll"
+      - SuperuserSettings__UserName=admin
+      - SuperuserSettings__Password=SuperSecurePassword123!
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Username=postgres;Password=postgres;Database=postgres;
     depends_on:
       - postgres
 
   postgres:
     image: postgres:15
     environment:
-      POSTGRES_USER: kizil
-      POSTGRES_PASSWORD: kizilllllll
-      POSTGRES_DB: db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
     ports:
-      - "5432:5433"
+      - "5432:5432"
