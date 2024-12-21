@@ -1,45 +1,68 @@
-﻿using ServiceLayer.Models;
+﻿using IronPython.Modules;
+using Microsoft.Extensions.Configuration;
+using OfficeOpenXml;
+using ServiceLayer.Models;
 using ServiceLayer.Models.Parsing;
+using System.Diagnostics;
 
 namespace ServiceLayer.Services
 {
     public class ScoringService
     {
         private readonly VbankcenterParserService _parserService;
+        private readonly string _scriptPath;
+        private readonly string _pythonPath;
 
-        public ScoringService(VbankcenterParserService parserService)
+        public ScoringService(VbankcenterParserService parserService, IConfiguration configuration)
         {
             _parserService = parserService;
+            _scriptPath = configuration["ScriptPath"];
+            _pythonPath = configuration["PythonPath"];
         }
 
-        public async Task<ScoringResponce> GetScoringRequestAsync(ScoringRequest request)
+        public async Task ComplementCompanyFile(string path)
         {
-            CompanyInfo? info = await _parserService.GetСompanyInfoAsync(request.INN);
+            var fileInfo = new FileInfo(path);
+            using var package = new ExcelPackage(fileInfo);
+            var worksheet = package.Workbook.Worksheets[0];
+            string INN = worksheet.Cells["A2"].Value.ToString();
 
-            CompanyDto company = new CompanyDto()
+            if (INN != null)
             {
-                EmployeeCount = request.EmployeeCount ?? info?.EmemployeeCount,
-                FormWithdrawalTurnover = request.FormWithdrawalTurnover,
-                INN = request.INN,
-                NegativeInformation = request.NegativeInformation,
-                OKVED = request.OKVED ?? info?.ActivityCode,
-                OKVEDCount = request.OKVEDCount,
-                RecommendedDealLimit = info?.RecommendedDealLimit,
-                RegistrarServices = request.RegistrarServices,
-                ReliabilityRating = info?.ReliabilityRating,
-                Revenue = request.Revenue ?? info?.Revenue,
-                Scammers = request.Scammers,
-                TaxationSystem = request.TaxationSystem,
-                TaxBurden = request.TaxBurden,
-                WithdrawalTurnover = request.WithdrawalTurnover,
-                ZSK = request.ZSK,
+                CompanyInfo? info = await _parserService.GetСompanyInfoAsync(INN);
+                if (worksheet.Cells["D2"] is null) worksheet.Cells["D2"].Value = info?.EmemployeeCount;
+                if (worksheet.Cells["B2"] is null) worksheet.Cells["B2"].Value = info?.ActivityCode;
+                if (worksheet.Cells["H2"] is null) worksheet.Cells["H2"].Value = info?.Revenue;
+                worksheet.Cells["N2"].Value = info?.ReliabilityRating;
+                worksheet.Cells["O2"].Value = info?.RecommendedDealLimit;
+            }
+            package.SaveAs(path);
+        }
+
+        public async Task ExecuteScoring(string path)
+        {
+            string arguments = $"\"{_scriptPath}\" \"{path}\"";
+
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                FileName = _pythonPath,
+                Arguments = arguments,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
             };
 
-            ScoringResponce responce = new ScoringResponce()
+            using (Process process = Process.Start(startInfo))
             {
-                Allow = true
+                string output = process.StandardOutput.ReadToEnd();
+                string error = process.StandardError.ReadToEnd();
+
+                if (!string.IsNullOrWhiteSpace(error))
+                {
+                    throw new Exception($"Error in python script: {error}");
+                }
             };
-            return responce;
         }
     }
 }

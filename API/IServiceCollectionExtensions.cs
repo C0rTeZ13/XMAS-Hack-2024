@@ -24,6 +24,7 @@ namespace API
 
             services.AddScoped<VbankcenterParserService, VbankcenterParserService>();
             services.AddScoped<ScoringService, ScoringService>();
+            services.AddScoped<XlsFileService, XlsFileService>();
         }
 
         public static void ConfigureApp(this IServiceCollection services, IConfiguration configuration)
